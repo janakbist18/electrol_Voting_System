@@ -8,3 +8,4 @@ pytest-django==4.10.0
 
 gunicorn
 whitenoise
+Pillow
