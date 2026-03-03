@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 import environ
+import os
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,6 +20,10 @@ ALLOWED_HOSTS = [h.strip() for h in env("ALLOWED_HOSTS", default="127.0.0.1,loca
 
 # Fernet key required for encrypted ballots
 FERNET_KEY = env("FERNET_KEY", default="")
+CSRF_TRUSTED_ORIGINS = [
+    "https://electrolvotingsystem-production.up.railway.app",
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -74,6 +81,7 @@ ASGI_APPLICATION = "nepal_voting.asgi.application"
 DATABASES = {
     "default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
