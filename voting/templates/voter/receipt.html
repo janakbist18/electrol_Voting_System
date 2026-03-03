@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h4>Vote Submitted</h4>
+    <p>Your receipt code:</p>
+    <div class="alert alert-info">
+      <strong>{{ receipt_uuid }}</strong>
+    </div>
+    <p class="small text-muted mb-0">
+      This receipt proves a submission happened, but does not reveal your vote.
+    </p>
+  </div>
+</div>
+{% endblock %}

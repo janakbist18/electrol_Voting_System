@@ -1,0 +1,15 @@
+
+from __future__ import annotations
+
+from django.utils.deprecation import MiddlewareMixin
+
+class SecurityHeadersMiddleware(MiddlewareMixin):
+    """
+    Minimal safe headers for local + simple prod.
+    """
+    def process_response(self, request, response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "same-origin")
+        response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
+        return response

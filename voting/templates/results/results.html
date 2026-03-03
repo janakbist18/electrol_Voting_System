@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>Results: {{ election.title }}</h4>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-auto">
+    <select class="form-select" name="constituency">
+      <option value="">All constituencies</option>
+      {% for c in constituencies %}
+        <option value="{{ c.id }}" {% if selected_constituency == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.code }} - {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-primary">Filter</button>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Constituency</th>
+      <th>Candidate</th>
+      <th>Party</th>
+      <th class="text-end">Votes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in tallies %}
+      <tr>
+        <td>{{ t.constituency.code }}</td>
+        <td>{{ t.candidate.full_name_en }}</td>
+        <td>{{ t.candidate.party.abbreviation }}</td>
+        <td class="text-end">{{ t.votes }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="text-muted">No tallies.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

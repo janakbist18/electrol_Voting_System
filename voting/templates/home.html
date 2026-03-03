@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home • Nepal Voting Demo{% endblock %}
+
+{% block content %}
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <!-- HERO -->
+      <div class="card hero-card hero-parallax p-4 p-md-5">
+        <!-- Animated Nepal flag -->
+        <img class="flag-corner" src="{% static 'img/nepal-flag.png' %}" alt="Nepal flag">
+
+        <div class="hero-content">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+              <h1 class="h3 mb-2">Secure Nepal Election Voting Demo</h1>
+              <p class="mb-3 text-white-50">
+                Register → Admin verifies → Vote once → Ballot encrypted → Results after election ends.
+              </p>
+
+              <!-- Countdown (uses first election end time) -->
+              {% if elections and elections.0 %}
+                <div class="countdown-chip">
+                  <span>Election ends in</span>
+                  <strong id="countdown">--:--:--</strong>
+                </div>
+                <span id="electionEndAt" data-end="{{ elections.0.end_at|date:'c' }}"></span>
+              {% endif %}
+            </div>
+
+            <div class="d-flex gap-2">
+              {% if request.user.is_authenticated %}
+                <a class="btn btn-warning" href="{% url 'voter_profile' %}">Complete Profile</a>
+              {% else %}
+                <a class="btn btn-success" href="{% url 'register' %}">Create Account</a>
+                <a class="btn btn-outline-light" href="{% url 'login' %}">Login</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /HERO -->
+    </div>
+
+    <!-- Stats row (glass style) -->
+    <div class="col-12 col-md-4">
+      <div class="card stat-card glass p-3">
+        <div class="text-muted small">Privacy</div>
+        <div class="fw-semibold">Encrypted ballots</div>
+        <div class="text-muted small">No voter link to choice</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card stat-card glass p-3">
+        <div class="text-muted small">Security</div>
+        <div class="fw-semibold">One vote per election</div>
+        <div class="text-muted small">DB constraint enforced</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card stat-card glass p-3">
+        <div class="text-muted small">Integrity</div>
+        <div class="fw-semibold">Audit hash-chain</div>
+        <div class="text-muted small">Tamper-evident logs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-2">
+    <h2 class="h5 mb-0">Recent Elections</h2>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'results' %}">View Results</a>
+  </div>
+
+  {% if elections %}
+    <div class="row g-3">
+      {% for e in elections %}
+        <div class="col-12">
+          <div class="card election-card glass p-3 p-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+              <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                  <h3 class="h6 mb-0">{{ e.title }}</h3>
+
+                  {% if e.status == "RUNNING" %}
+                    <span class="badge text-bg-success pill">RUNNING</span>
+                  {% elif e.status == "ENDED" %}
+                    <span class="badge text-bg-secondary pill">ENDED</span>
+                  {% else %}
+                    <span class="badge text-bg-warning pill">DRAFT</span>
+                  {% endif %}
+                </div>
+
+                <div class="text-muted small">
+                  {{ e.start_at }} → {{ e.end_at }}
+                </div>
+
+                {% if e.description %}
+                  <div class="text-muted mt-2">{{ e.description }}</div>
+                {% endif %}
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2">
+                {% if request.user.is_authenticated %}
+                  <a class="btn btn-primary" href="{% url 'vote_page' e.id %}">
+                    Vote Now
+                  </a>
+                  <a class="btn btn-outline-dark" href="{% url 'voter_profile' %}">
+                    Profile
+                  </a>
+                {% else %}
+                  <a class="btn btn-primary" href="{% url 'login' %}?next={% url 'vote_page' e.id %}">
+                    Login to Vote
+                  </a>
+                  <a class="btn btn-outline-success" href="{% url 'register' %}">
+                    Register
+                  </a>
+                {% endif %}
+
+                {% if e.status == "ENDED" %}
+                  <a class="btn btn-outline-secondary" href="{% url 'results_detail' e.id %}">
+                    See Results
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">No elections found.</div>
+  {% endif %}
+
+  <!-- Countdown JS -->
+  <script>
+    (function() {
+      const holder = document.getElementById("electionEndAt");
+      const el = document.getElementById("countdown");
+      if (!holder || !el) return;
+
+      const end = new Date(holder.dataset.end).getTime();
+      if (Number.isNaN(end)) return;
+
+      const tick = () => {
+        const now = Date.now();
+        let diff = Math.max(0, end - now);
+
+        const h = String(Math.floor(diff / 3600000)).padStart(2, "0");
+        diff %= 3600000;
+        const m = String(Math.floor(diff / 60000)).padStart(2, "0");
+        diff %= 60000;
+        const s = String(Math.floor(diff / 1000)).padStart(2, "0");
+
+        el.textContent = `${h}:${m}:${s}`;
+        if (end - now <= 0) el.textContent = "ENDED";
+      };
+
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
+{% endblock %}

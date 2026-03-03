@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>Elections</h4>
+<div class="list-group">
+  {% for e in elections %}
+    <a class="list-group-item list-group-item-action" href="/results/{{ e.id }}/">
+      <strong>{{ e.title }}</strong>
+      <div class="text-muted small">{{ e.start_at }} → {{ e.end_at }} | Status: {{ e.status }}</div>
+    </a>
+  {% empty %}
+    <div class="text-muted">No elections.</div>
+  {% endfor %}
+</div>
+{% endblock %}

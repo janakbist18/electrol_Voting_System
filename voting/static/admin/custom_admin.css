@@ -1,0 +1,38 @@
+/* Modern admin look */
+:root {
+  --primary: #0d6efd;
+  --danger: #dc3545;
+}
+
+#header {
+  background: linear-gradient(90deg, #0b1220, #111827);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+#branding h1 a {
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.module h2, .module caption, .inline-group h2 {
+  background: rgba(13,110,253,.10) !important;
+  color: #111827;
+}
+
+a:link, a:visited {
+  color: var(--primary);
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+  border-radius: 10px !important;
+}
+
+.object-tools a {
+  border-radius: 10px !important;
+}
+
+fieldset.module {
+  border-radius: 14px;
+  overflow: hidden;
+}

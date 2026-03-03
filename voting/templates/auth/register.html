@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h4>Register</h4>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input class="form-control" name="email" type="email" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password (min 10 chars)</label>
+        <input class="form-control" name="password" type="password" required>
+      </div>
+      <button class="btn btn-success">Create account</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
