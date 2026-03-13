@@ -9,4 +9,6 @@ urlpatterns = [
     path("elections/<int:election_id>/candidates", views_api.api_candidates),
     path("elections/<int:election_id>/vote", views_api.api_vote),
     path("elections/<int:election_id>/results", views_api.api_results),
+
+    path("vote/status", views_api.api_vote_status),
 ]

@@ -101,3 +101,36 @@ def api_results(request, election_id: int):
         "constituency_id": int(constituency_id) if constituency_id else None,
         "rows": rows,
     })
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def api_vote_status(request):
+    """Check the status of user's votes across all elections"""
+    if not request.user.is_authenticated:
+        return Response(
+            {"detail": "Must be logged in to check vote status"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    from .models import VoteVerification
+
+    votes = VoteVerification.objects.filter(
+        voter=request.user
+    ).select_related("ballot__election", "ballot__constituency").order_by("-created_at")
+
+    vote_statuses = []
+    for v in votes:
+        vote_statuses.append({
+            "election_id": v.ballot.election.id,
+            "election_title": v.ballot.election.title,
+            "status": v.status,
+            "receipt_uuid": str(v.ballot.receipt_uuid),
+            "voted_at": v.created_at.isoformat(),
+            "verified_at": v.verified_at.isoformat() if v.verified_at else None,
+        })
+
+    return Response({
+        "user_email": request.user.email,
+        "votes": vote_statuses,
+    })

@@ -1,4 +1,4 @@
-Django==5.1.6
+Django==4.2.10
 djangorestframework==3.15.2
 django-environ==0.11.2
 cryptography==42.0.8
@@ -9,3 +9,48 @@ pytest-django==4.10.0
 gunicorn
 whitenoise
 Pillow
+
+# Authentication & Security
+PyJWT==2.8.0
+django-cors-headers==4.3.1
+
+# OTP & 2FA
+pyotp==2.9.0
+phonenumbers==8.13.0
+qrcode==7.4.2
+
+# Email & Notifications
+django-anymail==10.2
+sendgrid==6.10.0
+twilio==8.10.0
+
+# Google OAuth
+google-auth==2.28.0
+google-auth-oauthlib==1.2.0
+
+# CAPTCHA
+django-recaptcha==4.0.0
+
+# Task Queue (Celery)
+celery==5.3.4
+redis==5.0.1
+django-celery-beat==2.4.0
+
+# API & Data
+requests==2.31.0
+pytz==2024.1
+python-dateutil==2.8.2
+
+# Monitoring
+sentry-sdk==1.40.6
+django-extensions==3.2.3
+
+# Code Quality
+flake8==7.0.0
+black==24.3.0
+isort==5.13.2
+
+# Utilities
+django-filter==24.1
+python-slugify==8.0.1
+bleach==6.1.0

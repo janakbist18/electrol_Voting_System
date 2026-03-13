@@ -28,15 +28,18 @@
       background: #0b1220 !important;
     }
 
-    /* ensure bg-light doesn't override in dark mode */
     body.dark.bg-light { background: #0b1220 !important; }
 
     body { color: var(--text); }
     .text-muted { color: var(--muted) !important; }
 
-    .brand-flag { width: 28px; height: 20px; object-fit: cover; border-radius: 3px; }
+    .brand-flag {
+      width: 28px;
+      height: 20px;
+      object-fit: cover;
+      border-radius: 3px;
+    }
 
-    /* HERO banner with mountain + overlay */
     .hero-card {
       position: relative;
       background: url("{% static 'img/mountain-banner.jpg' %}") center/cover no-repeat;
@@ -46,18 +49,17 @@
       overflow: hidden;
       box-shadow: var(--shadow);
     }
+
     .hero-card::before {
       content: "";
       position: absolute;
       inset: 0;
       background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.55));
     }
-    .hero-content { position: relative; z-index: 2; }
 
-    /* Parallax effect (JS updates background-position) */
+    .hero-content { position: relative; z-index: 2; }
     .hero-parallax { background-attachment: scroll; }
 
-    /* Animated Nepal flag corner */
     .flag-corner {
       position: absolute;
       top: 14px;
@@ -69,12 +71,12 @@
       transform-origin: left center;
       animation: wave 2.6s ease-in-out infinite;
     }
+
     @keyframes wave {
-      0%,100% { transform: rotate(-2deg) translateY(0px); }
-      50%     { transform: rotate(2deg) translateY(-2px); }
+      0%, 100% { transform: rotate(-2deg) translateY(0px); }
+      50% { transform: rotate(2deg) translateY(-2px); }
     }
 
-    /* Countdown chip */
     .countdown-chip {
       display: inline-flex;
       gap: 10px;
@@ -88,9 +90,9 @@
       color: #fff;
       font-size: .95rem;
     }
+
     .countdown-chip strong { font-weight: 700; }
 
-    /* Glassmorphism cards */
     .glass {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
@@ -100,7 +102,8 @@
       border-radius: 14px;
     }
 
-    .stat-card, .election-card {
+    .stat-card,
+    .election-card {
       border: 0;
       border-radius: 14px;
       box-shadow: var(--shadow);
@@ -114,6 +117,11 @@
     }
 
     .pill { font-size: .85rem; }
+
+    .logout-form {
+      margin: 0;
+      display: inline;
+    }
   </style>
 </head>
 
@@ -136,13 +144,11 @@
           <a class="btn btn-outline-light btn-sm" href="{% url 'results' %}">Results</a>
         </li>
 
-        <!-- Dark Mode Toggle Button -->
         <li class="nav-item">
           <button id="themeToggle" class="btn btn-outline-light btn-sm" type="button">Dark</button>
         </li>
 
         {% if request.user.is_authenticated %}
-          <!-- ✅ Badges inside navbar when authenticated -->
           <li class="nav-item d-flex align-items-center">
             {% if request.user.is_superuser %}
               <span class="badge text-bg-danger me-2">SUPERUSER</span>
@@ -160,8 +166,12 @@
           <li class="nav-item">
             <a class="btn btn-outline-light btn-sm" href="{% url 'voter_profile' %}">Profile</a>
           </li>
+
           <li class="nav-item">
-            <a class="btn btn-warning btn-sm" href="{% url 'logout' %}">Logout</a>
+            <form method="post" action="{% url 'logout' %}" class="logout-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-warning btn-sm">Logout</button>
+            </form>
           </li>
         {% else %}
           <li class="nav-item">
@@ -196,9 +206,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- ✅ JS moved to bottom so elements exist -->
 <script>
-  // Dark mode toggle with localStorage
   (function() {
     const saved = localStorage.getItem("theme");
     if (saved === "dark") document.body.classList.add("dark");
@@ -216,7 +224,6 @@
     }
   })();
 
-  // Parallax for hero banner
   (function() {
     const hero = document.querySelector(".hero-parallax");
     if (!hero) return;
@@ -227,7 +234,7 @@
         0,
         Math.min(1, (window.innerHeight - rect.top) / (window.innerHeight + rect.height))
       );
-      const y = Math.round(offset * 30); // 0..30
+      const y = Math.round(offset * 30);
       hero.style.backgroundPosition = `center ${y}%`;
     };
 

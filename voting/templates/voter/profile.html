@@ -18,6 +18,7 @@
 
     <form method="post" novalidate>
       {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
 
       <div class="mb-3">
         <label class="form-label">Citizenship ID</label>
