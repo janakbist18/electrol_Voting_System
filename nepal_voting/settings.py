@@ -13,24 +13,22 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY", default="dev-secret-key-change-me")
 DEBUG = env.bool("DEBUG", default=False)
 
-# Railway sets this sometimes; fallback to your own env var
-RAILWAY_DOMAIN = os.getenv("RAILWAY_PUBLIC_DOMAIN", "")
+# Azure App Service hostname
+AZURE_DOMAIN = os.getenv("WEBSITE_HOSTNAME", "")
 
-# Hosts
+# Hosts - Allow Azure App Service domain
 ALLOWED_HOSTS = [h.strip() for h in env("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",") if h.strip()]
-if RAILWAY_DOMAIN:
-    ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
+if AZURE_DOMAIN:
+    ALLOWED_HOSTS.append(AZURE_DOMAIN)
 
-# If you want a quick temporary "allow all" for debugging (NOT recommended long-term):
-# ALLOWED_HOSTS = ["*"]
+# CSRF / Proxy trusted origins for Azure HTTPS
+CSRF_TRUSTED_ORIGINS = []
+if AZURE_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{AZURE_DOMAIN}")
+    # Add wildcard for Azure domain
+    CSRF_TRUSTED_ORIGINS.append(f"https://*.azurewebsites.net")
 
-# CSRF / Proxy (important for Railway HTTPS)
-CSRF_TRUSTED_ORIGINS = [
-    "https://electrolvotingsystem-production.up.railway.app",
-]
-if RAILWAY_DOMAIN:
-    CSRF_TRUSTED_ORIGINS.append(f"https://{RAILWAY_DOMAIN}")
-
+# Support Azure's X-Forwarded-Proto header for HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 INSTALLED_APPS = [
@@ -54,7 +52,7 @@ MIDDLEWARE = [
 
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    
+
 
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "axes.middleware.AxesMiddleware",
